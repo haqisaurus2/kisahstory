@@ -157,7 +157,7 @@
            console.log(id)
            $.ajax({
                 method: "POST",
-               url: window.location.origin + "/public"/api/delete-comic",
+               url: window.location.origin + "/public/api/delete-comic",
                // headers: { "X-CSRF-Token": csrftoken },
                contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({id}),
