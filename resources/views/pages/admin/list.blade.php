@@ -108,7 +108,7 @@
            console.log(uuid)
            $.ajax({
                 method: "GET",
-               url: "/api/sync-comic/" + uuid,
+               url: window.location.origin +"/public/api/sync-comic/" + uuid,
                // headers: { "X-CSRF-Token": csrftoken },
                contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({uuid}),
@@ -121,7 +121,7 @@
            console.log(uuid)
            $.ajax({
                 method: "POST",
-               url: "/api/update-comic/",
+               url: window.location.origin +"/public/api/update-comic/",
                // headers: { "X-CSRF-Token": csrftoken },
                contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({uuid}),
@@ -140,7 +140,7 @@
                 $(".input-url").prop('disabled', true)
                 $.ajax({
                     method: "POST",
-                    url: "/api/add-comic/", 
+                    url: window.location.origin + "/public/api/add-comic/", 
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify({url}),
                 }).done(function (msg) {
