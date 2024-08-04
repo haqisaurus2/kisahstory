@@ -1,0 +1,233 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components{
+    .container {
+        max-width: 1280px;
+    }
+  }
+
+body {
+    font-family: "Inter", sans-serif;
+}
+
+.navbar-fixed {
+    @apply fixed top-0;
+    backdrop-filter: blur(10px);
+    box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.2);
+}
+.hamburger-line {
+    @apply w-[30px] h-[2px] my-2 block bg-slate-900;
+}
+
+.hamburger-active {
+}
+
+.hamburger-active > span:nth-child(1) {
+    @apply rotate-45;
+}
+.hamburger-active > span:nth-child(2) {
+    @apply scale-0;
+}
+.hamburger-active > span:nth-child(3) {
+    @apply -rotate-45;
+}
+
+#mobile-menu > .backdrop {
+    @apply h-[calc(100vh-45px)] w-screen fixed left-0 bg-slate-900 opacity-0;
+}
+#mobile-menu.menu-active .backdrop {
+     
+    @apply opacity-70 block;
+}
+#mobile-menu.menu-active ul {
+    @apply right-0;
+}
+.dropdown:hover .dropdown-menu {
+    display: flex;
+    flex-direction: column;
+  }
+/* hero section  */
+.main-grid {
+    position: absolute;
+    left: 0;
+    width: 70%;
+    height: 100%;
+    clip-path: polygon(0 0, 100% 0, 80% 100%, 0% 100%);
+}
+.second-grid {
+    position: absolute;
+    right: 0;
+    width: 50%;
+    clip-path: polygon(42% 0, 100% 0%, 100% 100%, 14% 100%);
+}
+.up-grid {
+    height: 60%;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 80%);
+}
+.bottom-grid {
+    top: -15%;
+    clip-path: polygon(0 0, 100% 24%, 100% 100%, 0 100%);
+}
+@media (min-width: 640px) {
+    .bottom-grid {
+        top: -14%;
+    } 
+}
+@media (min-width: 768px) {
+    .bottom-grid {
+        top: -13%;
+    }
+}
+@media (min-width: 1024px) {
+    .bottom-grid {
+        top: -12%;
+    }
+}
+@media (min-width: 1280px) {
+    .bottom-grid {
+        top: -12%;
+    }
+}
+.bg-image {
+    /* The image used */
+    background-image: url("https://lombokpost.jawapos.com/wp-content/uploads/2022/04/F-ONE-PIECE.jpg");
+
+    /* Add the blur effect */
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+
+    /* Full height */
+    height: 100%;
+    position: absolute;
+    width: 100%;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* hero section : e */
+
+/* section 1 */
+/* For Webkit-based browsers (Chrome, Safari and Opera) */
+.scrollbar-hide::-webkit-scrollbar {
+    visibility: hidden;
+    height: 5px;
+}
+
+ 
+.scrollbar-hide:hover::-webkit-scrollbar {
+    height: 5px;
+    visibility: visible; 
+}
+
+.scrollbar-hide:hover::-webkit-scrollbar-track {
+    background-color: #e4e4e4;
+    border-radius: 20px;
+}
+
+.scrollbar-hide:hover::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background-image: linear-gradient(180deg, #00dc64 0%, #76d2a0 99%);
+    box-shadow: inset 2px 2px 2px 0 rgba(#fff, 0.5);
+}
+
+/* section 1 :e */
+
+
+/* page story  */
+.bg-cover {
+    background-image: url("https://lombokpost.jawapos.com/wp-content/uploads/2022/04/F-ONE-PIECE.jpg");
+
+}
+/* page story : e */
+
+/* chapter page  */
+    /* loading fb  */
+    .lds-facebook {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-facebook div {
+        display: inline-block;
+        position: absolute;
+        left: 8px;
+        width: 16px;
+        background: #fff;
+        animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+    }
+    .lds-facebook div:nth-child(1) {
+        left: 8px;
+        animation-delay: -0.24s;
+    }
+    .lds-facebook div:nth-child(2) {
+        left: 32px;
+        animation-delay: -0.12s;
+    }
+    .lds-facebook div:nth-child(3) {
+        left: 56px;
+        animation-delay: 0;
+    }
+    @keyframes lds-facebook {
+        0% {
+            top: 8px;
+            height: 64px;
+        }
+        50%,
+        100% {
+            top: 24px;
+            height: 32px;
+        }
+    }
+    /* loading fb :e  */
+
+
+    /* start  */
+    .jq-stars {
+        display: inline-block;
+    }
+
+    .jq-rating-label {
+        font-size: 22px;
+        display: inline-block;
+        position: relative;
+        vertical-align: top;
+        font-family: helvetica, arial, verdana;
+    }
+
+    .jq-star {
+        width: 100px;
+        height: 100px;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .jq-star-svg {
+        padding-left: 3px;
+        width: 100%;
+        height: 100%;
+    }
+
+    .jq-star:hover .fs-star-svg path {
+    }
+
+    .jq-star-svg path {
+        /* stroke: #000; */
+        stroke-linejoin: round;
+    }
+
+    /* un-used */
+    .jq-shadow {
+        -webkit-filter: drop-shadow(-2px -2px 2px #888);
+        filter: drop-shadow(-2px -2px 2px #888);
+    }
+    /* start : e */
+
+
+/* chapter page : e */
