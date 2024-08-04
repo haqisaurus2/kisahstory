@@ -29,3 +29,4 @@ Route::post('/test', [ScraperController::class, 'test']);
 
 Route::post('/delete-chapter-story', [ScraperController::class, 'deleteChapterStory']);
 Route::get('/rescrap-chapter/{id}', [ScraperController::class, 'rescrapChapter']);
+Route::get('/test', function (Request $request) { return "OK"; });
