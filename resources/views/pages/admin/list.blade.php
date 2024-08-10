@@ -113,7 +113,7 @@
                contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({uuid}),
            }).done(function (msg) {
-               //window.location.reload()
+               window.location.reload()
            });
        })
         $(document).on('click', '.update-button', (e) => {
