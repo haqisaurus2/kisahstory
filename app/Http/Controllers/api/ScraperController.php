@@ -176,7 +176,7 @@ class ScraperController extends Controller
                     $tanggal = trim($node->filter(".tanggalseries")->text());
                     $link = "https://komiku.id" . $node->filter(".judulseries a")->attr("href");
                     $title = preg_replace('/[^0-9.-]/', "", $title);
-                    $title = preg_replace('/-/', ".", $title);
+                    $title = (float) preg_replace('/-/', ".", $title);
                     $chapter = Chapter::where(["order" => $title, 'comic_id' => $story->id])->first();
                     error_log($link);
                     error_log($title);
