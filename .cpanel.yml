@@ -1,5 +1,9 @@
 ---
 deployment:
-tasks:
-- export DEPLOYPATH=/home/kisd2443/public_html/git
-- /bin/cp -r * $DEPLOYPATH
+  tasks:
+    - export DEPLOYPATH=/home/kisd2443/repositories/kisahstory
+    - /bin/cp -R resources $DEPLOYPATH
+    - /bin/cp -R app $DEPLOYPATH
+    - /bin/cp -R database $DEPLOYPATH
+    - /bin/cp -R routes $DEPLOYPATH
+    - /bin/cp -R public $DEPLOYPATH
