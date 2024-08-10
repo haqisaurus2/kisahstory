@@ -7,7 +7,9 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
+                "resources/images/favicon.ico",
                 "resources/css/app.css",
+                "resources/js/app.js",
                 "resources/js/jquery.min.js",
                 "resources/js/rate.min.js",
                 "resources/react/app.tsx",

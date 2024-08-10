@@ -1,0 +1,50 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-C-e46twg.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/images/favicon.ico": {
+    "file": "assets/favicon-DbT5UMO3.ico",
+    "src": "resources/images/favicon.ico"
+  },
+  "resources/images/logo-square.png": {
+    "file": "assets/logo-square-Cr0S7Py4.png",
+    "src": "resources/images/logo-square.png"
+  },
+  "resources/images/logo.png": {
+    "file": "assets/logo-BsHRk_gk.png",
+    "src": "resources/images/logo.png"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BJt7a8Ah.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/jquery.min.js": {
+    "file": "assets/jquery.min-DS7oxA7b.js",
+    "name": "jquery.min",
+    "src": "resources/js/jquery.min.js",
+    "isEntry": true
+  },
+  "resources/js/rate.min.js": {
+    "file": "assets/rate.min-PtFeUkII.js",
+    "name": "rate.min",
+    "src": "resources/js/rate.min.js",
+    "isEntry": true
+  },
+  "resources/react/app.tsx": {
+    "file": "assets/app-Dz_o1PaJ.js",
+    "name": "app",
+    "src": "resources/react/app.tsx",
+    "isEntry": true,
+    "css": [
+      "assets/app-H2TfyRaV.css",
+      "assets/app-C-e46twg.css"
+    ],
+    "assets": [
+      "assets/logo-BsHRk_gk.png"
+    ]
+  }
+}
