@@ -168,7 +168,7 @@ class ScraperController extends Controller
                 $tag = trim($node->filter("a")->text());
                 return $tag;
             });
-            $story->tags =  json_encode($tags);
+            $story->tags = json_encode($tags);
             $story->save();
             $chapters = $crawler->filter("#Daftar_Chapter tr")->each(function (Crawler $node, $i) use ($story) {
                 if ($i > 0) {
@@ -184,7 +184,7 @@ class ScraperController extends Controller
                         $chapter = Chapter::create([
                             'order' => $title,
                             'update' => date('Y-m-d', strtotime($tanggal)),
-                            'link' =>  $link,
+                            'link' => $link,
                             'comic_id' => $story->id
                         ]);
                     }
@@ -230,7 +230,7 @@ class ScraperController extends Controller
 
 
 
-                    return ['order' => $title, 'tanggal' => $tanggal, 'link' =>  $link, 'images' => $images];
+                    return ['order' => $title, 'tanggal' => $tanggal, 'link' => $link, 'images' => $images];
                 }
             });
             array_shift($chapters);
@@ -252,9 +252,9 @@ class ScraperController extends Controller
             DB::rollBack();
             echo $e->getMessage();
         }
-        
-        
-       
+
+
+
 
         return $data;
     }
@@ -277,10 +277,10 @@ class ScraperController extends Controller
                     $title = trim($node->filter(".judulseries")->text());
                     $tanggal = trim($node->filter(".tanggalseries")->text());
                     $link = "https://komiku.id" . $node->filter(".judulseries a")->attr("href");
-                     $title = preg_replace('/[^0-9.-]/', "", $title);
+                    $title = preg_replace('/[^0-9.-]/', "", $title);
                     $title = preg_replace('/-/', ".", $title);
 
-                    return ['order' => $title, 'tanggal' => $tanggal, 'link' =>  $link,];
+                    return ['order' => $title, 'tanggal' => $tanggal, 'link' => $link,];
                 }
             });
             array_shift($chapters);
@@ -297,7 +297,7 @@ class ScraperController extends Controller
                         $ch = Chapter::create([
                             'order' => $chapter["order"],
                             'update' => date('Y-m-d', strtotime($chapter["tanggal"])),
-                            'link' =>  $chapter["link"],
+                            'link' => $chapter["link"],
                             'comic_id' => $story->id
                         ]);
                     }
@@ -339,7 +339,7 @@ class ScraperController extends Controller
     {
         $comicID = $request->input("id");
         $comic = Comic::where("id", $comicID)->firstOrFail();
-        $chapters = Chapter::where("comic_id", $comic->id,)->where('order', '>=', $request->input("chapter"))->get();
+        $chapters = Chapter::where("comic_id", $comic->id, )->where('order', '>=', $request->input("chapter"))->get();
         foreach ($chapters as $chapter) {
             $chapter->images()->delete();
             $chapter->delete();
@@ -388,10 +388,11 @@ class ScraperController extends Controller
             $comic->uuid = $uuid;
             $comic->last_chapter = $lastChapter;
             $comic->tags = $tags;
+            $comic->scrap_date = new Carbon();
             $comic->save();
             foreach ($chapters as $chapter) {
                 $ch = Chapter::firstOrNew(['comic_id' => $comic->id, 'order' => $chapter['order']]);
-                $ch->update = date('Y-m-d', strtotime($chapter['order']));
+                $ch->update = date('Y-m-d', strtotime($chapter['tanggal']));
                 $ch->link = $chapter['link'];
                 $ch->order = $chapter['order'];
                 $ch->save();
@@ -400,6 +401,8 @@ class ScraperController extends Controller
                     $img->src = $image['src'];
                     $img->save();
                 }
+                $comic->last_chapter = $ch->order;
+                $comic->save();
             }
             DB::commit();
         } catch (Exception $e) {
@@ -447,17 +450,17 @@ class ScraperController extends Controller
             }
             $story = ComicStory::where("title", $comic->title)->first();
             if ($story === null) {
-                $story =   ComicStory::create([
+                $story = ComicStory::create([
                     "title" => $comic->title,
-                    "source_url"  => $comic->url,
-                    "synopsis"  => $comic->description,
-                    "meta"  => $comic->description,
-                    "genre"  => $comic->genre,
-                    "how_to_read"  => $comic->how_to_read,
-                    "last_chapter"  => $comic->last_chapter,
-                    "status"  => $comic->status,
-                    "bg"  => $comic->bg,
-                    "thumbnail"  => $comic->thumbnail,
+                    "source_url" => $comic->url,
+                    "synopsis" => $comic->description,
+                    "meta" => $comic->description,
+                    "genre" => $comic->genre,
+                    "how_to_read" => $comic->how_to_read,
+                    "last_chapter" => $comic->last_chapter,
+                    "status" => $comic->status,
+                    "bg" => $comic->bg,
+                    "thumbnail" => $comic->thumbnail,
                     "slug" => Str::slug($comic->title),
                     "author_id" => $author->id,
                     "artist_id" => $artist->id,
@@ -512,7 +515,7 @@ class ScraperController extends Controller
                             $section = ComicSection::create([
                                 "chapter_id" => $chapter->id,
                                 "order" => $image["order"],
-                                "slug" => Str::slug("baca " . $story->type . " " . $story->category->name . " " . $story->title . " chapter " . $chapterI["order"] . " bahasa indonesia " .  $image["order"] . "." . $ext),
+                                "slug" => Str::slug("baca " . $story->type . " " . $story->category->name . " " . $story->title . " chapter " . $chapterI["order"] . " bahasa indonesia " . $image["order"] . "." . $ext),
                                 "alt2" => $image["src"],
                                 "alt1" => "",
                                 "content" => "",
@@ -530,14 +533,14 @@ class ScraperController extends Controller
             return $comic;
         } catch (Exception $e) {
             DB::rollBack();
-            return  $e->getMessage();
+            return $e->getMessage();
         }
     }
     public function deleteChapterStory(Request $request)
     {
         $comicID = $request->input("id");
         $comic = ComicStory::where("id", $comicID)->firstOrFail();
-        $chapters = ComicChapter::where("story_id", $comic->id,)->where('order', '>=', $request->input("chapter"))->get();
+        $chapters = ComicChapter::where("story_id", $comic->id, )->where('order', '>=', $request->input("chapter"))->get();
         foreach ($chapters as $chapter) {
             $chapter->sections()->delete();
             $chapter->delete();
@@ -599,5 +602,173 @@ class ScraperController extends Controller
                 "image_count" => count($chapter->images)
             ]
         ];
+    }
+
+    public function downloadJsonComic(Request $request)
+    {
+        $url = $request->input("url");
+        $data = ['uuid' => Str::uuid()];
+        ini_set('max_execution_time', 3000);
+        // DB::beginTransaction();
+        $response = null;
+        $chapters = [];
+        $story = null;
+        $crawler = null;
+        try {
+            $response = $this->client->request('GET', $url); // URL, where you want to fetch the content
+            // get content and pass to the crawler
+            $content = $response->html();
+            $crawler = new Crawler($content);
+
+            $title = $crawler->filter('#Judul > h1')->text();
+            $title = preg_replace('/Komik/', "", $title);
+            $genre = $crawler->filter('#Informasi > table tr:nth-child(2)  > td:nth-child(2)')->text();
+
+
+            $author = $crawler->filter("#Informasi > table  tr:nth-child(4) > td:nth-child(2)")->text();
+            $status = $crawler->filter("#Informasi > table  tr:nth-child(5) > td:nth-child(2)")->text();
+            $howToRead = $crawler->filter("#Informasi > table  tr:nth-child(8) > td:nth-child(2)")->text();
+
+            $description = $crawler->filter("#Judul > p.desc")->text();
+            $thumbnail = $crawler->filter("#Informasi > div > img")->attr("src");
+            $bg = $crawler->filter("#Informasi > div > img")->attr("src");
+
+            Log::debug($title);
+
+            // $story = Comic::where("url", $url)->first();
+            // if ($story === null) {
+            //     $jsonData = Comic::create([
+            //         'title' => $title,
+            //         'genre' => $genre,
+            //         'author' => $author,
+            //         'status' => strtoupper($status),
+            //         'how_to_read' => $howToRead,
+            //         'description' => $description,
+            //         'thumbnail' => $thumbnail,
+            //         'bg' => $bg,
+            //         'url' => $url,
+            //         'uuid' => $data['uuid'],
+            //         'last_chapter' => 0,
+            //         'tags' => "",
+            //         "scrap_date" => Carbon::now()
+            //     ]);
+            // }
+
+
+            $tags = $crawler->filter("#Informasi > ul > li")->each(function (Crawler $node) {
+                $tag = trim($node->filter("a")->text());
+                return $tag;
+            });
+            // $story->tags =  json_encode($tags);
+            // $story->save();
+            $chapters = $crawler->filter("#Daftar_Chapter tr")->each(function (Crawler $node, $i) use ($story) {
+                if ($i > 0) {
+                    $title = trim($node->filter(".judulseries")->text());
+                    $tanggal = trim($node->filter(".tanggalseries")->text());
+                    $link = "https://komiku.id" . $node->filter(".judulseries a")->attr("href");
+                    $title = preg_replace('/[^0-9.-]/', "", $title);
+                    $title = (float) preg_replace('/-/', ".", $title);
+                    // $chapter = Chapter::where(["order" => $title, 'comic_id' => $story->id])->first();
+                    error_log($link);
+                    error_log($title);
+                    // if ($chapter === null) {
+                    //     $chapter = Chapter::create([
+                    //         'order' => $title,
+                    //         'update' => date('Y-m-d', strtotime($tanggal)),
+                    //         'link' =>  $link,
+                    //         'comic_id' => $story->id
+                    //     ]);
+                    // }
+                    // if ($story->last_chapter < $title) {
+                    //     $story->last_chapter = $title;
+                    //     $story->scrap_date = Carbon::now();
+                    //     $story->save();
+                    // }
+                    $images = [];
+                    try {
+                        $client = new HttpBrowser(HttpClient::create());
+                        // get chapter images   
+                        $responseChapter = $client->request('GET', $link); // URL, where you want to fetch the content
+
+
+                        $content = $responseChapter->html();
+                        $crawler = new Crawler($content);
+
+                        $images = $crawler->filter("#Baca_Komik > img")->each(function (Crawler $node2, $j) {
+                            $img = trim($node2->attr("src"));
+                            // $image = Image::where(["order" => $j, 'chapter_id' => $chapter->id])->first();
+                            // if ($image === null) {
+                            //     $image = Image::create([
+                            //         'src' => $img,
+                            //         'order' => $j,
+                            //         'chapter_id' => $chapter->id
+                            //     ]);
+                            // }
+
+                            return [
+                                'src' => $img,
+                                'order' => $j,
+                            ];
+                        });
+                    } catch (Exception $er) {
+                        $response = $er->getMessage();
+                        error_log($response);
+                        // $responseBodyAsString = $response->getBody()->getContents();
+                        //echo $response->getStatusCode() . PHP_EOL;
+                        //echo $responseBodyAsString;
+                        //DB::rollBack(); 
+                    }
+
+
+
+                    return ['order' => $title, 'tanggal' => $tanggal, 'link' => $link, 'images' => $images];
+                }
+            });
+            array_shift($chapters);
+            $chapters = array_reverse($chapters);
+            $data['title'] = $title;
+            $data['genre'] = $genre;
+            $data['author'] = $author;
+            $data['status'] = $status;
+            $data['howToRead'] = $howToRead;
+            $data['description'] = $description;
+            $data['thumbnail'] = $thumbnail;
+            $data['bg'] = $bg;
+            $data['tags'] = $tags;
+            $max = $chapters[0]['order'];
+            $data['lastChapter'] = $max;
+            $data['chapters'] = $chapters;
+            $data['url'] = $url;
+            // DB::commit();
+        } catch (Exception $e) {
+            // DB::rollBack();
+            echo $e->getMessage();
+        }
+
+
+        // $response = Http::post('http://localhost:8000/api/upload-json', $data);
+        $url = 'https://kisahstory.my.id/api/upload-json';
+
+        // Create the context for the request
+        $context = stream_context_create(array(
+            'http' => array(
+                // http://www.php.net/manual/en/context.http.php
+                'method' => 'POST',
+                'header' =>  "Content-Type: application/json\r\n",
+                'content' => json_encode($data)
+            )
+        ));
+
+        // Send the request
+        $response = file_get_contents($url, FALSE, $context);
+
+        // Check for errors
+        if ($response === FALSE) {
+            die('http Error');
+        }
+
+ 
+
+        return $data;
     }
 }

@@ -10,14 +10,16 @@ use App\Models\ComicChapter;
 use App\Models\ComicSection;
 use App\Models\ComicStory;
 use App\Models\ComicTag;
+use App\Models\mongo\Comic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class UploadController extends Controller
 {
     public function postUpload(Request $request) {  
+        ini_set('max_execution_time', 3000);
         $json = $request->all();  
-        return $json;
+        // return $json;
         $author = ComicAuthor::where("name", $json["author"])->first();
         if ($author === null) {
             $author = ComicAuthor::create([
@@ -119,4 +121,23 @@ class UploadController extends Controller
         }
         return $story;
     }
+    public function getDownload(string $uuid) {  
+        $comic = Comic::where("uuid", $uuid)->with("chapters", "chapters.images")->first();
+        $comic['last_chapter'] = number_format((float) $comic['last_chapter'], 1, '.', '');
+        foreach ($comic['chapters'] as $key => $chapter) {
+            $comic['chapters'][$key]['order'] = number_format((float) $comic['chapters'][$key]['order'], 1, '.', '');
+        }
+        return $comic->toJson();
+    }
+
+    public function getJsonDownload(string $uuid) {  
+        $comic = Comic::where("uuid", $uuid)->with("chapters", "chapters.images")->first();
+        $comic['last_chapter'] = number_format((float) $comic['last_chapter'], 1, '.', '');
+        foreach ($comic['chapters'] as $key => $chapter) {
+            $comic['chapters'][$key]['order'] = number_format((float) $comic['chapters'][$key]['order'], 1, '.', '');
+        }
+        return $comic->toJson();
+    } 
+
 }
+
