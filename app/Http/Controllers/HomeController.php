@@ -95,21 +95,21 @@ class HomeController extends Controller
 	}
 
 	public function sitemap() {
-		$sitemap = Sitemap::create("https://ceritoon.xyz");
-		$sitemap->add(Url::create("https://ceritoon.xyz/")->setPriority(0.9)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
-		$sitemap->add(Url::create("https://ceritoon.xyz/category/manga")->setPriority(0.9)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
-		$sitemap->add(Url::create("https://ceritoon.xyz/category/manhua")->setPriority(0.9)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
-		$sitemap->add(Url::create("https://ceritoon.xyz/category/manhwa")->setPriority(0.9)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
+		$sitemap = Sitemap::create();
+		$sitemap->add(Url::create("https://kisahstory.my.id/")->setPriority(0.9)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
+		$sitemap->add(Url::create("https://kisahstory.my.id/category/manga")->setPriority(0.9)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
+		$sitemap->add(Url::create("https://kisahstory.my.id/category/manhua")->setPriority(0.9)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
+		$sitemap->add(Url::create("https://kisahstory.my.id/category/manhwa")->setPriority(0.9)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
 
 		$stories = ComicStory::all();
 		foreach ($stories as $story) {
-			$sitemap->add(Url::create("https://ceritoon.xyz/story/{$story->slug}")->setPriority(1)->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY));
+			$sitemap->add(Url::create("https://kisahstory.my.id/story/{$story->slug}")->setPriority(1)->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY));
 		}
 		$chapters = ComicChapter::all();
 		foreach ($chapters as $chapter) {
-			$sitemap->add(Url::create("https://ceritoon.xyz/chapter/{$chapter->slug}")->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY));
+			$sitemap->add(Url::create("https://kisahstory.my.id/chapter/{$chapter->slug}")->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY));
 		}
 		
-		$sitemap->writeToFile(public_path('sitemap.xml'));
+		$sitemap->writeToFile(public_path('../../htdocs/sitemap.xml'));
 	}
 }

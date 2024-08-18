@@ -24,10 +24,10 @@ Route::post('/delete-comic', [ScraperController::class, 'deleteComic']);
 Route::post('/update-comic', [ScraperController::class, 'updateComic']);
 Route::post('/delete-chapter', [ScraperController::class, 'deleteChapter']);
 Route::get('/sync-comic/{uuid}', [ScraperController::class, 'syncToWeb']);
-Route::post('/test', [ScraperController::class, 'test']);
+Route::get('/test', [ScraperController::class, 'cobalagi']);
 
 
 Route::post('/delete-chapter-story', [ScraperController::class, 'deleteChapterStory']);
 Route::get('/rescrap-chapter/{id}', [ScraperController::class, 'rescrapChapter']);
 Route::post('/download-json', [ScraperController::class, 'downloadJsonComic']);
-Route::get('/test', function (Request $request) { return "OK"; });
+Route::get('/excel', [ScraperController::class, 'readExcel']);
