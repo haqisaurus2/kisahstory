@@ -111,7 +111,11 @@ class HomeController extends Controller
 		}
 		
 		// $sitemap->writeToFile(public_path('/home/kisd2443/public_html/sitemap.xml'));
-		echo getcwd().'/sitemap.xml';
-		$sitemap->writeToFile(public_path('sitemap.xml'));
+		try {
+			$sitemap->writeToFile(public_path('sitemap.xml'));
+		} catch (\Throwable $th) {
+			//throw $th;
+		}
+		return public_path('sitemap.xml');
 	}
 }
