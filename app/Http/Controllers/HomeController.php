@@ -110,6 +110,6 @@ class HomeController extends Controller
 			$sitemap->add(Url::create("https://kisahstory.my.id/chapter/{$chapter->slug}")->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY));
 		}
 		
-		$sitemap->writeToFile(public_path('../../public_html/sitemap.xml'));
+		$sitemap->writeToFile(public_path('../../../public_html/sitemap.xml'));
 	}
 }
