@@ -60,11 +60,11 @@ class ScraperController extends Controller
             $crawler = new Crawler($content);
 
             $title = $crawler->filter('#Judul > h1')->text();
-            $genre = $crawler->filter('#Informasi > table tr:nth-child(2)  > td:nth-child(2)')->text();
+            $genre = $crawler->filter('#Informasi > table  tr:nth-child(3) > td:nth-child(2)')->text();
 
 
-            $author = $crawler->filter("#Informasi > table  tr:nth-child(4) > td:nth-child(2)")->text();
-            $status = $crawler->filter("#Informasi > table  tr:nth-child(5) > td:nth-child(2)")->text();
+            $author = $crawler->filter("#Informasi > table  tr:nth-child(5) > td:nth-child(2)")->text();
+            $status = $crawler->filter("#Informasi > table  tr:nth-child6) > td:nth-child(2)")->text();
             $howToRead = $crawler->filter("#Informasi > table  tr:nth-child(8) > td:nth-child(2)")->text();
 
             $description = $crawler->filter("#Judul > p.desc")->text();
