@@ -25,7 +25,6 @@ export default defineConfig({
     },
     build: {
         assetsInlineLimit: 0,
-        outDir: '/public/build',
         emptyOutDir: true,
         rollupOptions: {
             output: {

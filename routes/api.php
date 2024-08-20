@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\BookmarkController;
@@ -31,3 +32,5 @@ Route::post('/delete-chapter-story', [ScraperController::class, 'deleteChapterSt
 Route::get('/rescrap-chapter/{id}', [ScraperController::class, 'rescrapChapter']);
 Route::post('/download-json', [ScraperController::class, 'downloadJsonComic']);
 Route::get('/excel', [ScraperController::class, 'readExcel']);
+
+Route::get('/get-prepare-list', [AdminController::class, 'getPrepareComicLIst']);

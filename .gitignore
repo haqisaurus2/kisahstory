@@ -19,3 +19,8 @@ yarn-error.log
 /.vscode
 build
 vendor.zip
+/public/build/assets/*.js
+/public/build/assets/*.css
+/public/build/assets/*.ico
+/public/build/assets/*.png
+/public/build/assets/*.jpg

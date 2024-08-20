@@ -638,45 +638,23 @@ class ScraperController extends Controller
 
             $title = $crawler->filter('#Judul > h1')->text();
             $title = preg_replace('/Komik/', "", $title);
-            $genre = $crawler->filter('#Informasi > table tr:nth-child(2)  > td:nth-child(2)')->text();
+            $genre = $crawler->filter('#Informasi > table tr:nth-child(3)  > td:nth-child(2)')->text();
 
 
-            $author = $crawler->filter("#Informasi > table  tr:nth-child(4) > td:nth-child(2)")->text();
-            $status = $crawler->filter("#Informasi > table  tr:nth-child(5) > td:nth-child(2)")->text();
+            $author = $crawler->filter("#Informasi > table  tr:nth-child(5) > td:nth-child(2)")->text();
+            $status = $crawler->filter("#Informasi > table  tr:nth-child(6) > td:nth-child(2)")->text();
             $howToRead = $crawler->filter("#Informasi > table  tr:nth-child(8) > td:nth-child(2)")->text();
 
             $description = $crawler->filter("#Judul > p.desc")->text();
             $thumbnail = $crawler->filter("#Informasi > div > img")->attr("src");
             $bg = $crawler->filter("#Informasi > div > img")->attr("src");
 
-            Log::debug($title);
-
-            // $story = Comic::where("url", $url)->first();
-            // if ($story === null) {
-            //     $jsonData = Comic::create([
-            //         'title' => $title,
-            //         'genre' => $genre,
-            //         'author' => $author,
-            //         'status' => strtoupper($status),
-            //         'how_to_read' => $howToRead,
-            //         'description' => $description,
-            //         'thumbnail' => $thumbnail,
-            //         'bg' => $bg,
-            //         'url' => $url,
-            //         'uuid' => $data['uuid'],
-            //         'last_chapter' => 0,
-            //         'tags' => "",
-            //         "scrap_date" => Carbon::now()
-            //     ]);
-            // }
-
-
+            Log::debug($title); 
             $tags = $crawler->filter("#Informasi > ul > li")->each(function (Crawler $node) {
                 $tag = trim($node->filter("a")->text());
                 return $tag;
             });
-            // $story->tags =  json_encode($tags);
-            // $story->save();
+            
             $chapters = $crawler->filter("#Daftar_Chapter tr")->each(function (Crawler $node, $i) use ($story) {
                 if ($i > 0) {
                     $title = trim($node->filter(".judulseries")->text());
@@ -687,19 +665,7 @@ class ScraperController extends Controller
                     // $chapter = Chapter::where(["order" => $title, 'comic_id' => $story->id])->first();
                     error_log($link);
                     error_log($title);
-                    // if ($chapter === null) {
-                    //     $chapter = Chapter::create([
-                    //         'order' => $title,
-                    //         'update' => date('Y-m-d', strtotime($tanggal)),
-                    //         'link' =>  $link,
-                    //         'comic_id' => $story->id
-                    //     ]);
-                    // }
-                    // if ($story->last_chapter < $title) {
-                    //     $story->last_chapter = $title;
-                    //     $story->scrap_date = Carbon::now();
-                    //     $story->save();
-                    // }
+                   
                     $images = [];
                     try {
                         $client = new HttpBrowser(HttpClient::create());
@@ -712,14 +678,6 @@ class ScraperController extends Controller
 
                         $images = $crawler->filter("#Baca_Komik > img")->each(function (Crawler $node2, $j) {
                             $img = trim($node2->attr("src"));
-                            // $image = Image::where(["order" => $j, 'chapter_id' => $chapter->id])->first();
-                            // if ($image === null) {
-                            //     $image = Image::create([
-                            //         'src' => $img,
-                            //         'order' => $j,
-                            //         'chapter_id' => $chapter->id
-                            //     ]);
-                            // }
 
                             return [
                                 'src' => $img,
@@ -729,13 +687,7 @@ class ScraperController extends Controller
                     } catch (Exception $er) {
                         $response = $er->getMessage();
                         error_log($response);
-                        // $responseBodyAsString = $response->getBody()->getContents();
-                        //echo $response->getStatusCode() . PHP_EOL;
-                        //echo $responseBodyAsString;
-                        //DB::rollBack(); 
                     }
-
-
 
                     return ['order' => $title, 'tanggal' => $tanggal, 'link' => $link, 'images' => $images];
                 }
@@ -751,13 +703,11 @@ class ScraperController extends Controller
             $data['thumbnail'] = $thumbnail;
             $data['bg'] = $bg;
             $data['tags'] = $tags;
-            $max = $chapters[0]['order'];
+            $max = $chapters[count($chapters) - 1]['order'];
             $data['lastChapter'] = $max;
             $data['chapters'] = $chapters;
             $data['url'] = $url;
-            // DB::commit();
         } catch (Exception $e) {
-            // DB::rollBack();
             echo $e->getMessage();
         }
 
@@ -768,7 +718,6 @@ class ScraperController extends Controller
         // Create the context for the request
         $context = stream_context_create(array(
             'http' => array(
-                // http://www.php.net/manual/en/context.http.php
                 'method' => 'POST',
                 'header' => "Content-Type: application/json\r\n",
                 'content' => json_encode($data)
@@ -792,27 +741,26 @@ class ScraperController extends Controller
 
         ini_set('max_execution_time', 3000);
         set_time_limit(3000);
-        $inputFileName = '/Applications/XAMPP/xamppfiles/kisahstory/daftar komik.xlsx';
+        $inputFileName = '../daftar komik.xlsx';
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
         $worksheet = null;
         $result = [];
 
         $worksheet = $spreadsheet->getSheetByName("Sheet1");
         $data = $worksheet->toArray();
+        $jsonData = null;
         foreach ($data as $key => $value) {
-            // error_log(count($value));
             if ($key >= 9 && count($result) < 1 && $value[1] != 'uploaded') {
-                // $url = $value[0];
                 error_log($key);
                 array_push($result, $value);
-                $this->downloadJsonComic($value[0]);
+                $jsonData = $this->downloadJsonComic($value[0]);
                 $worksheet->getCell('B' . $key + 1)->setValue('uploaded');
             }
         }
         // Save the modified spreadsheet to a new file
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->save($inputFileName);
-        return $result;
+        return $jsonData;
     }
 
     public function cobalagi(Request $request)

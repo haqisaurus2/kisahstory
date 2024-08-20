@@ -5,6 +5,7 @@ import { useAuth } from './AuthContext';
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const auth = useAuth();
   const location = useLocation();
+  console.log(auth);
 
   if (!auth.user) {
     return <Navigate to="/member/login" state={{ from: location }} replace />;

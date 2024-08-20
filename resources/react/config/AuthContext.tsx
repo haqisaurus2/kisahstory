@@ -12,6 +12,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<any>(null);
 
   const signin = (newUser: any, callback: () => void) => {
+    document.cookie = "token=" + "res.data.token" + "; path=/";
     setUser(newUser);
     callback();
   };
