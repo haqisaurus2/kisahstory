@@ -1,7 +1,11 @@
 import { Button, Input, Modal, Space, Table } from "antd";
 import Search from "antd/es/input/Search";
 import { useEffect, useState } from "react";
-import { getComicPrepareList, syncComic, updateComic } from "../repositories/mongocomic";
+import {
+    getComicPrepareList,
+    syncComic,
+    updateComic,
+} from "../repositories/mongocomic";
 export default function Admin() {
     const [loadingSyncs, setLoadingSyncs] = useState<any[]>([]);
     const [loadingUpdates, setLoadingUpdates] = useState<any[]>([]);
@@ -11,7 +15,7 @@ export default function Admin() {
         pageSize: 50,
         total: 0,
         keyword: "",
-        sort: ["id", "desc"]
+        sort: ["id", "desc"],
     });
     useEffect(() => {
         getList();
@@ -19,51 +23,58 @@ export default function Admin() {
     }, [pagination.page, pagination.keyword, pagination.sort]);
 
     function getList() {
-        getComicPrepareList(pagination).then((response: any) => {
-            setDataTable(response.data);
-            setPagination({
-                ...pagination,
-                total: response.total,
+        getComicPrepareList(pagination)
+            .then((response: any) => {
+                setDataTable(response.data);
+                setPagination({
+                    ...pagination,
+                    total: response.total,
+                });
+            })
+            .catch((error: any) => {
+                Modal.error({
+                    content: `Gagal mendapatkan data!`,
+                });
             });
-        }).catch((error: any) => {
-            Modal.error({
-                content: `Gagal mendapatkan data!`,
-            });
-        });
     }
 
     function syncComicAction(record: any) {
         setLoadingSyncs([record.uuid, ...loadingSyncs]);
-        syncComic(record.uuid).then((response: any) => {
-            Modal.success({content:`berhasil sync ${record.title}`});
-        } ).finally(() => {
-            const newData = [...loadingSyncs];
-            newData.splice(record.uuid, 1);
-            setLoadingSyncs(newData);
-            getList();
-        }).catch((error: any) => {
-            Modal.error({
-                content: `gagal sync ${record.title}`
+        syncComic(record.uuid)
+            .then((response: any) => {
+                Modal.success({ content: `berhasil sync ${record.title}` });
+            })
+            .finally(() => {
+                const newData = [...loadingSyncs];
+                newData.splice(record.uuid, 1);
+                setLoadingSyncs(newData);
+                getList();
+            })
+            .catch((error: any) => {
+                Modal.error({
+                    content: `gagal sync ${record.title}`,
+                });
             });
-        });
     }
 
     function updateComicAction(record: any) {
         setLoadingUpdates([record.uuid, ...loadingUpdates]);
-        updateComic(record.uuid).then((response: any) => {
-            Modal.success({content:`berhasil update ${record.title}`});
-        } ).finally(() => {
-            const newData = [...loadingUpdates];
-            newData.splice(record.uuid, 1);
-            setLoadingUpdates(newData);
-            getList();
-        }).catch((error: any) => {
-            Modal.error({
-                content: `gagal update ${record.title}`
+        updateComic(record.uuid)
+            .then((response: any) => {
+                Modal.success({ content: `berhasil update ${record.title}` });
+            })
+            .finally(() => {
+                const newData = [...loadingUpdates];
+                newData.splice(record.uuid, 1);
+                setLoadingUpdates(newData);
+                getList();
+            })
+            .catch((error: any) => {
+                Modal.error({
+                    content: `gagal update ${record.title}`,
+                });
             });
-        });
     }
-
 
     const columns = [
         {
@@ -72,11 +83,23 @@ export default function Admin() {
             render: (_: any, record: any) => {
                 return (
                     <Space key={record.uuid} size="middle">
-                        <Button type="primary" onClick={() => syncComicAction(record)} loading={loadingSyncs.indexOf(record.uuid) != -1} size="small" iconPosition={'end'}>
+                        <Button
+                            type="primary"
+                            onClick={() => syncComicAction(record)}
+                            loading={loadingSyncs.indexOf(record.uuid) != -1}
+                            size="small"
+                            iconPosition={"end"}
+                        >
                             Sync Web
                         </Button>
 
-                        <Button type="dashed" onClick={() => updateComicAction(record)} loading={loadingSyncs.indexOf(record.uuid) != -1} size="small" iconPosition={'end'}>
+                        <Button
+                            type="dashed"
+                            onClick={() => updateComicAction(record)}
+                            loading={loadingSyncs.indexOf(record.uuid) != -1}
+                            size="small"
+                            iconPosition={"end"}
+                        >
                             Update
                         </Button>
                     </Space>
@@ -126,27 +149,30 @@ export default function Admin() {
                     });
                 }}
             />
-            <Table 
+            <Table
                 dataSource={dataTable}
                 columns={columns}
                 pagination={{
-                    pageSize: pagination.pageSize ,
+                    pageSize: pagination.pageSize,
                     current: pagination.page,
                     total: pagination.total,
                     onChange(page, pageSize) {
-                        setPagination({ ...pagination, page: page});
+                        setPagination({ ...pagination, page: page });
                     },
                 }}
-                onChange={(pagination: any, filters: any, sorter: any) => {
-                    const column = sorter.column?.key || 'id';
-                    let sort =  (sorter.order == 'ascend') ? 'asc' : 'desc';
-                    setPagination({
-                        ...pagination,
-                        page: 1,
-                        total: 0,
-                        sort: [column, sort]
-                    });
-                }} />
+                onChange={(paginationTable: any, filters: any, sorter: any) => {
+                    const column = sorter.column?.key || "id";
+                    let sort = sorter.order == "ascend" ? "asc" : "desc";
+                    if (column != pagination.sort[0] || sort != pagination.sort[1]) {
+                        setPagination({
+                            ...pagination,
+                            page: 1,
+                            total: 0,
+                            sort: [column, sort],
+                        });
+                    }
+                }}
+            />
         </>
     );
 }
