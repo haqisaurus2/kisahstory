@@ -210,7 +210,25 @@ class ScraperController extends Controller
                     }
                     $images = [];
                     try {
-                        $client = new HttpBrowser(HttpClient::create());
+                        $client = new HttpBrowser(HttpClient::create([
+                            'headers' => [
+                                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.96 Safari/537.36',
+                                "Accept" => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                                // "Accept-Encoding" => "gzip, deflate, br, zstd",
+                                "Accept-Language" => "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
+                                "Cache-Control" => "max-age=0",
+                                "Priority" => "u=0, i",
+                                "Referer" => "https://komiku.id/",
+                                "Sec-Ch-Ua" => "\"Not)A;Brand\";v=\"99\", \"Google Chrome\";v=\"127\", \"Chromium\";v=\"127\"",
+                                "Sec-Ch-Ua-Mobile" => "?0",
+                                "Sec-Ch-Ua-Platform" => "\"macOS\"",
+                                "Sec-Fetch-Dest" => "document",
+                                "Sec-Fetch-Mode" => "navigate",
+                                "Sec-Fetch-Site" => "same-site",
+                                "Sec-Fetch-User" => "?1",
+                                "Upgrade-Insecure-Requests" => "1"
+                            ],
+                        ]));
                         // get chapter images   
                         $responseChapter = $client->request('GET', $link); // URL, where you want to fetch the content
 
@@ -283,9 +301,9 @@ class ScraperController extends Controller
             $story = Comic::where("uuid", $uuid)->first();
 
 
-            $response = $this->client->get($story->url);
+            $response = $this->client->request('GET', $story->url);
             // get content and pass to the crawler
-            $content = $response->getBody()->getContents();
+            $content = $response->html();
             $crawler = new Crawler($content);
             $chapters = $crawler->filter("#Daftar_Chapter tr")->each(function (Crawler $node, $i) {
                 if ($i > 0) {
@@ -304,8 +322,8 @@ class ScraperController extends Controller
             foreach ($chapters as $chapter) {
                 if ((float) $story->last_chapter < (float) $chapter["order"]) {
                     // get chapter images   
-                    $responseChapter = $this->client->get($chapter["link"]);
-                    $content = $responseChapter->getBody()->getContents();
+                    $responseChapter = $this->client->request('GET', $chapter["link"]);
+                    $content = $responseChapter->html();
                     $crawler = new Crawler($content);
                     $ch = Chapter::where(["order" => $chapter["order"], 'comic_id' => $story->id])->first();
                     if ($ch === null) {

@@ -15,6 +15,17 @@ import { Routes, Route, Router } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./Login";
 import Page404 from "./Page404";
+import Dashboard from "./pages/Dashboard";
+import {
+    AppstoreOutlined,
+    FileTextOutlined,
+    MailOutlined,
+    PictureOutlined,
+} from "@ant-design/icons";
+import StoryList from "./pages/StoryList";
+import StoryAdd from "./pages/StoryAdd";
+import ChapterList from "./pages/ChapterList";
+import ChapterAdd  from "./pages/ChapterAdd";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -64,6 +75,20 @@ const Main: React.FC = () => {
             disabled: true,
         },
     ];
+    const itemsMenu: any[] = [
+        {
+            label: "Story",
+            key: "story",
+            icon: <FileTextOutlined />,
+            
+        },
+        {
+            label: "Comic",
+            key: "comic",
+            icon: <PictureOutlined />,
+            disabled: true,
+        },
+    ];
 
     return (
         <Layout>
@@ -74,19 +99,24 @@ const Main: React.FC = () => {
                     alignItems: "center",
                 }}
             >
-                <div className="demo-logo">
-                    <Image src={Logo} width={150} />
+                <div className="h-[64px] justify-center pt-[9px]">
+                    <Image src={Logo} width={150} className="h-full" />
                 </div>
                 <Space>
                     <div>&nbsp;</div>
                 </Space>
-                <Dropdown menu={{ items }}>
-                    <a onClick={(e) => e.preventDefault()}>
-                        <Space>
-                            <Avatar src="https://avatar.iran.liara.run/public" />
-                        </Space>
-                    </a>
-                </Dropdown>
+                <Space>
+                    <div className="w-[200px]">
+                        <Menu mode="horizontal" items={itemsMenu} theme="dark"/>
+                    </div>
+                    <Dropdown menu={{ items }}>
+                        <a onClick={(e) => e.preventDefault()}>
+                            <Space>
+                                <Avatar src="https://avatar.iran.liara.run/public" />
+                            </Space>
+                        </a>
+                    </Dropdown>
+                </Space>
             </Header>
             <Content style={{ padding: "0 48px" }}>
                 <Layout
@@ -99,7 +129,12 @@ const Main: React.FC = () => {
                 >
                     <Content style={{ padding: "0 24px", minHeight: 280 }}>
                         <Routes>
-                            <Route path="/" element={<Home />} />
+                            <Route path="/" element={<Dashboard />} />
+                            <Route path="/story" element={<StoryList />} />
+                            <Route path="/story/chapter/:id" element={<ChapterList />} />
+                            <Route path="/story/chapter/add" element={<ChapterAdd />} />
+                            <Route path="/story/add" element={<StoryAdd />} />
+                            <Route path="/*" element={<Page404 />} />
                         </Routes>
                     </Content>
                 </Layout>

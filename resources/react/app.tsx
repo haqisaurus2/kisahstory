@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import Main from "./Main";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import Login from "./Login";
 import Page404 from "./Page404";
 import Admin from "./pages/Admin";
@@ -16,14 +16,14 @@ if (rootElement) {
     const root = ReactDOM.createRoot(rootElement);
     root.render(
         <AuthProvider>
-            <BrowserRouter>
+            <HashRouter>
                 <Routes>
-                    <Route path="member/login" element={<Login />} />
-                    <Route path="member/admin" element={<Admin />} />
+                    <Route path="/*" element={<Main />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/admin" element={<Admin />} />
                     <Route path="member/a" element={<PrivateRoute><Main /></PrivateRoute>} />
-                    <Route path="member/*" element={<Page404 />} />
                     </Routes>
-            </BrowserRouter>
+            </HashRouter>
         </AuthProvider>
     );
 } else {

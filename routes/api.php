@@ -34,3 +34,8 @@ Route::post('/download-json', [ScraperController::class, 'downloadJsonComic']);
 Route::get('/excel', [ScraperController::class, 'readExcel']);
 
 Route::get('/get-prepare-list', [AdminController::class, 'getPrepareComicLIst']);
+
+Route::get('/get-story-list', [AdminController::class, 'getStoryLIst']);
+Route::get('/get-category-dropdown', [AdminController::class, 'getCategoryDropdown']);
+Route::get('/get-chapter-list/{storyId}', [AdminController::class, 'getChapterList']);
+Route::post('/add-story', [AdminController::class, 'addStory']);
