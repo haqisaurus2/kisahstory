@@ -557,6 +557,7 @@ class ScraperController extends Controller
                     }
                 }
             }
+            $story->uuid = $uuid;
             $story->last_chapter = $comic->last_chapter;
             $story->save();
             $comic->sync_date = Carbon::now();

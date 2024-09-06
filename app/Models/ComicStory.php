@@ -12,7 +12,7 @@ class ComicStory extends Model
 {
     use HasFactory;
     protected $table = 'stories';
-    protected $fillable = ['title', 'meta','slug','synopsis','status','reader_count','how_to_read','rating','type','bg','last_chapter', 'reader_age', 'thumbnail', 'artist_id', 'author_id', 'category_id', 'source_url' ]; 
+    protected $fillable = ['title', 'meta','slug','synopsis','status','reader_count','how_to_read','rating','type','bg','last_chapter', 'reader_age', 'thumbnail', 'artist_id', 'author_id', 'category_id', 'source_url', 'uuid' ]; 
 
     public function category(): BelongsTo
     {
