@@ -121,15 +121,17 @@ class HomeController extends Controller
 
 	public function sitemapBlade() {
 		$stories = ComicStory::select('slug', 'updated_at')->orderByDesc('rating')->get();
-		$xml = view('sitemap', ['stories' => $stories])->render();
+		$xml_version = '<?xml version="1.0" encoding="UTF-8"?>';
+		$xml = view('sitemap', ['stories' => $stories, 'xml_version' => $xml_version])->render();
 
 		return response($xml)->withHeaders([
 			'content-type' => 'text/xml'
 		]);
 	}
 	public function sitemapBladeStory(string $story) {
+		$xml_version = '<?xml version="1.0" encoding="UTF-8"?>';
 		$story = ComicStory::where("slug", $story)->with('chapters')->firstOrFail();
-		$xml = view('sitemap-story', ['story' => $story])->render();
+		$xml = view('sitemap-story', ['story' => $story, 'xml_version' => $xml_version])->render();
 
 		return response($xml)->withHeaders([
 			'content-type' => 'text/xml'
