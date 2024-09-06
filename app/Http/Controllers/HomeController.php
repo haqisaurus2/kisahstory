@@ -118,4 +118,21 @@ class HomeController extends Controller
 		}
 		return public_path('/sitemap.xml');
 	}
+
+	public function sitemapBlade() {
+		$stories = ComicStory::select('slug', 'updated_at')->orderByDesc('rating')->get();
+		$xml = view('sitemap', ['stories' => $stories])->render();
+
+		return response($xml)->withHeaders([
+			'content-type' => 'text/xml'
+		]);
+	}
+	public function sitemapBladeStory(string $story) {
+		$story = ComicStory::where("slug", $story)->with('chapters')->firstOrFail();
+		$xml = view('sitemap-story', ['story' => $story])->render();
+
+		return response($xml)->withHeaders([
+			'content-type' => 'text/xml'
+		]);
+	}
 }
