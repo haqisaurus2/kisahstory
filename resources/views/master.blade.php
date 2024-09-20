@@ -14,6 +14,8 @@
 	/>
 	<meta name="google-site-verification" content="lZXyJKiLtv0eKAgRdKFjoyoUT1NMxHK6YchrtMknXF8" />
 	<meta name="msvalidate.01" content="6C4FAC8EE0CB5AC55533DE284828DEFD" />
+	<meta name="robots" content="index, follow">
+
 	<script src="https://unpkg.com/dexie/dist/dexie.js"></script>
 	@yield('seo')
 
