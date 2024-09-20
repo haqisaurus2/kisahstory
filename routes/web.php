@@ -35,6 +35,7 @@ Route::post('/logout', [SocialiteController::class, 'logout']);
 
 Route::get('/sitemap.xml', [HomeController::class, 'sitemapBlade']); 
 Route::get('/sitemap-{slug?}.xml', [HomeController::class, 'sitemapBladeStory']); 
+Route::get('/sitemap.txt', [HomeController::class, 'sitemapText']); 
 
 
 
