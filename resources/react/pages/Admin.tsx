@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Space, Table } from "antd";
+import { Button, Input, Modal, notification, Space, Table } from "antd";
 import Search from "antd/es/input/Search";
 import { useEffect, useState } from "react";
 import {
@@ -17,6 +17,8 @@ export default function Admin() {
         keyword: "",
         sort: ["id", "desc"],
     });
+    const [api, contextHolder] = notification.useNotification();
+
     useEffect(() => {
         getList();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -32,9 +34,12 @@ export default function Admin() {
                 });
             })
             .catch((error: any) => {
-                Modal.error({
-                    content: `Gagal mendapatkan data!`,
-                });
+                api.error({
+                    message: 'Error!',
+                    description:
+                      `Gagal mendapatkan data!'`,
+                    duration: 0,
+                  });
             });
     }
 
@@ -42,7 +47,12 @@ export default function Admin() {
         setLoadingSyncs([record.uuid, ...loadingSyncs]);
         syncComic(record.uuid)
             .then((response: any) => {
-                Modal.success({ content: `berhasil sync ${record.title}` });
+                api.success({
+                    message: 'Success!',
+                    description:
+                      `Berhasil sync data! ${record.title}`,
+                    duration: 0,
+                  });
             })
             .finally(() => {
                 const newData = [...loadingSyncs];
@@ -51,9 +61,13 @@ export default function Admin() {
                 getList();
             })
             .catch((error: any) => {
-                Modal.error({
-                    content: `gagal sync ${record.title}`,
-                });
+               
+                api.error({
+                    message: 'Error!',
+                    description:
+                      `Gagal sync data! ${record.title}`,
+                    duration: 0,
+                  });
             });
     }
 
@@ -61,7 +75,12 @@ export default function Admin() {
         setLoadingUpdates([record.uuid, ...loadingUpdates]);
         updateComic(record.uuid)
             .then((response: any) => {
-                Modal.success({ content: `berhasil update ${record.title}` });
+                api.success({
+                    message: 'Success!',
+                    description:
+                      `Berhasil update data! ${record.title}`,
+                    duration: 0,
+                  });
             })
             .finally(() => {
                 const newData = [...loadingUpdates];
@@ -70,9 +89,12 @@ export default function Admin() {
                 getList();
             })
             .catch((error: any) => {
-                Modal.error({
-                    content: `gagal update ${record.title}`,
-                });
+                api.error({
+                    message: 'Error!',
+                    description:
+                      `Gagal update data! ${record.title}`,
+                    duration: 0,
+                  });
             });
     }
 
@@ -139,6 +161,7 @@ export default function Admin() {
     ];
     return (
         <>
+            {contextHolder}
             <Input.Search
                 onSearch={(value, evt, source) => {
                     setPagination({
