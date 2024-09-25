@@ -1,48 +1,51 @@
 import React from "react";
-import { Button, Checkbox, Form, Input, Image } from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import "./../css/reactjs.css"; // Import the CSS file for custom styles
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useAuth } from "./config/AuthContext";
+import { loginUsingGoogle } from "./repositories/auth";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
-    const location = useLocation();
     const auth = useAuth();
 
-    const from = location.state?.from?.pathname || "/";
+    const handleGoogleSuccess = (response: any) => {
+        try {
+            const tokenId = response.credential;
+            // Send tokenId to your Laravel API for verification and user creation/login
+            loginUsingGoogle(tokenId)
+                .then((response: any) => {
+                    auth.login(response.access_token, response.expires_in);
+                    navigate('/dashboard/');
+                })
+                .finally(() => {
+                })
+                .catch((error: any) => {});
 
-    const onFinish = (values: any) => {
-        auth.signin(values.username, () => {
-            navigate(from, { replace: true });
-        });
+            // Save the token in localStorage or manage it with a state management tool
+        } catch (error) {
+            console.error("Google login error:", error);
+        }
     };
 
     return (
         <div className="bg-gradient-to-br from-primary to-blue-500 min-h-screen flex flex-col justify-center items-center text-center">
-            <div className="bg-white rounded-lg shadow-lg p-8 max-w-md">
+            <div className="bg-white rounded-lg shadow-lg p-8 pb-10 max-w-md">
                 <h1 className="text-4xl font-bold text-center text-primary mb-8">
                     Selamat Datang di Kisah Story
                 </h1>
                 <p className="dark:text-gray-400">
                     Silahkan login atau daftar dengan tombol di bawah
                 </p>
-                <form className="space-y-6">
-                    <div>
-                        <a
-                            href="/auth/google"
-                            className="w-full text-center py-3 my-3 border flex space-x-2 items-center justify-center border-slate-200 rounded-lg text-slate-700 hover:border-slate-400 hover:text-slate-900 hover:shadow transition duration-150"
-                        >
-                            <Image
-                                src="https://www.svgrepo.com/show/355037/google.svg"
-                                className="!w-6 !h-6"
-                            />
-                            <span className="text-gray-800">
-                                Login / Register with Google
-                            </span>
-                        </a>
+
+                <GoogleOAuthProvider clientId="625954834855-job0ittr0ed93iqvckd90g5sk4qomfnh.apps.googleusercontent.com">
+                    <div className="flex justify-center align-center h-[40px] pt-5 mb-5">
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={() => console.log("Login Failed")}
+                        />
                     </div>
-                </form>
+                </GoogleOAuthProvider>
             </div>
             <div className="py-5 text-center">
                 <div className="text-center sm:text-left whitespace-nowrap">

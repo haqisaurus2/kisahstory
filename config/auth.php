@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver' => 'jwt',  // Set JWT as the driver for the API guard
+            'provider' => 'users',
+            'hash' => false,
+        ],
     ],
 
     /*

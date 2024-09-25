@@ -1,28 +1,27 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Main from "./Main";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Login from "./Login";
-import Page404 from "./Page404";
-import Admin from "./pages/Admin";
 import PrivateRoute from "./config/PrivateRoute";
 import { AuthProvider } from "./config/AuthContext";
-import "./../css/app.css"
+import "./../css/app.css";
+import Home from "./pages/Home";
+import Main from "./Main";
+import Dashboard from "./pages/Dashboard";
+import Admin from "./pages/Admin";
+import PrivateRouteAdmin from "./config/PrivateRouteAdmin";
 
 const rootElement = document.getElementById("app");
 if (rootElement) {
-    console.log("element   ada");
-
     const root = ReactDOM.createRoot(rootElement);
     root.render(
         <AuthProvider>
             <HashRouter>
                 <Routes>
-                    <Route path="/*" element={<Main />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/admin" element={<Admin />} />
-                    <Route path="member/a" element={<PrivateRoute><Main /></PrivateRoute>} />
-                    </Routes>
+                    <Route path="/dashboard/*" element={<PrivateRoute component={Main} />} />
+                    <Route path="/admin" element={<PrivateRouteAdmin component={Admin} />} />
+                </Routes>
             </HashRouter>
         </AuthProvider>
     );

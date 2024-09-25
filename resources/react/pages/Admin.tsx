@@ -1,4 +1,13 @@
-import { Button, Input, Modal, notification, Space, Table } from "antd";
+import {
+    Button,
+    Input,
+    Modal,
+    notification,
+    Space,
+    Table,
+    TableColumnsType,
+    TableProps,
+} from "antd";
 import Search from "antd/es/input/Search";
 import { useEffect, useState } from "react";
 import {
@@ -6,10 +15,23 @@ import {
     syncComic,
     updateComic,
 } from "../repositories/mongocomic";
+import { TableRowSelection } from "antd/es/table/interface";
+interface DataType {
+    key: React.Key;
+    id: number;
+    title: string;
+    last_chapter: number;
+    uuid: string;
+    sync_date: string;
+    scrap_date: string;
+}
 export default function Admin() {
     const [loadingSyncs, setLoadingSyncs] = useState<any[]>([]);
     const [loadingUpdates, setLoadingUpdates] = useState<any[]>([]);
     const [dataTable, setDataTable] = useState<any[]>([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const [selectedRows, setSelectedRows] = useState<DataType[]>([]);
+
     const [pagination, setPagination] = useState({
         page: 1,
         pageSize: 50,
@@ -35,24 +57,22 @@ export default function Admin() {
             })
             .catch((error: any) => {
                 api.error({
-                    message: 'Error!',
-                    description:
-                      `Gagal mendapatkan data!'`,
+                    message: "Error!",
+                    description: `Gagal mendapatkan data!'`,
                     duration: 0,
-                  });
+                });
             });
     }
 
-    function syncComicAction(record: any) {
+    async function syncComicAction(record: any) {
         setLoadingSyncs([record.uuid, ...loadingSyncs]);
-        syncComic(record.uuid)
+        return syncComic(record.uuid)
             .then((response: any) => {
                 api.success({
-                    message: 'Success!',
-                    description:
-                      `Berhasil sync data! ${record.title}`,
+                    message: "Success!",
+                    description: `Berhasil sync data! ${record.title}`,
                     duration: 0,
-                  });
+                });
             })
             .finally(() => {
                 const newData = [...loadingSyncs];
@@ -61,14 +81,12 @@ export default function Admin() {
                 getList();
             })
             .catch((error: any) => {
-               
                 api.error({
-                    message: 'Error!',
-                    description:
-                      `Gagal sync data! ${record.title}`,
+                    message: "Error!",
+                    description: `Gagal sync data! ${record.title}`,
                     duration: 0,
-                  });
-            });
+                });
+            }); 
     }
 
     function updateComicAction(record: any) {
@@ -76,11 +94,10 @@ export default function Admin() {
         updateComic(record.uuid)
             .then((response: any) => {
                 api.success({
-                    message: 'Success!',
-                    description:
-                      `Berhasil update data! ${record.title}`,
+                    message: "Success!",
+                    description: `Berhasil update data! ${record.title}`,
                     duration: 0,
-                  });
+                });
             })
             .finally(() => {
                 const newData = [...loadingUpdates];
@@ -90,15 +107,14 @@ export default function Admin() {
             })
             .catch((error: any) => {
                 api.error({
-                    message: 'Error!',
-                    description:
-                      `Gagal update data! ${record.title}`,
+                    message: "Error!",
+                    description: `Gagal update data! ${record.title}`,
                     duration: 0,
-                  });
+                });
             });
     }
-
-    const columns = [
+   
+    const columns: TableColumnsType<DataType> = [
         {
             title: "action",
             key: "uuid",
@@ -159,6 +175,20 @@ export default function Admin() {
             sorter: true,
         },
     ];
+
+ 
+    const rowSelection: TableProps<DataType>["rowSelection"] = {
+        onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+            console.log(
+                `selectedRowKeys: ${selectedRowKeys}`,
+                "selectedRows: ",
+                selectedRows
+            );
+            setSelectedRows(selectedRows);
+        },
+         
+    };
+
     return (
         <>
             {contextHolder}
@@ -172,7 +202,17 @@ export default function Admin() {
                     });
                 }}
             />
-            <Table
+            <Space>
+                <Button onClick={async () => {
+                    if (selectedRows.length) {
+                        for(const key in selectedRows)
+                            await syncComicAction(selectedRows[key])
+                        }
+                }}>Bulk sync</Button>
+            </Space>
+            <Table<DataType>
+                rowKey={(record: any) => record.id}
+                rowSelection={rowSelection}
                 dataSource={dataTable}
                 columns={columns}
                 pagination={{
@@ -186,7 +226,10 @@ export default function Admin() {
                 onChange={(paginationTable: any, filters: any, sorter: any) => {
                     const column = sorter.column?.key || "id";
                     let sort = sorter.order == "ascend" ? "asc" : "desc";
-                    if (column != pagination.sort[0] || sort != pagination.sort[1]) {
+                    if (
+                        column != pagination.sort[0] ||
+                        sort != pagination.sort[1]
+                    ) {
                         setPagination({
                             ...pagination,
                             page: 1,

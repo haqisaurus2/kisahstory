@@ -11,7 +11,7 @@ import {
     Space,
 } from "antd";
 import Logo from "@/images/logo.png";
-import { Routes, Route, Router } from "react-router-dom";
+import { Routes, Route, Router, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./Login";
 import Page404 from "./Page404";
@@ -26,10 +26,15 @@ import StoryList from "./pages/StoryList";
 import StoryAdd from "./pages/StoryAdd";
 import ChapterList from "./pages/ChapterList";
 import ChapterAdd  from "./pages/ChapterAdd";
+import { useAuth } from "./config/AuthContext";
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const Main: React.FC = () => {
+    const navigate = useNavigate();
+    const auth = useAuth();
+    const { logout } = useAuth();
+
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
@@ -70,9 +75,12 @@ const Main: React.FC = () => {
             type: "divider",
         },
         {
-            label: "3rd menu item（disabled）",
+            label: "Logout",
             key: "3",
-            disabled: true,
+            onClick: () => {
+                logout();
+                navigate('/login');
+            }
         },
     ];
     const itemsMenu: any[] = [
@@ -112,7 +120,7 @@ const Main: React.FC = () => {
                     <Dropdown menu={{ items }}>
                         <a onClick={(e) => e.preventDefault()}>
                             <Space>
-                                <Avatar src="https://avatar.iran.liara.run/public" />
+                                <Avatar src={auth.user?.photo} />
                             </Space>
                         </a>
                     </Dropdown>

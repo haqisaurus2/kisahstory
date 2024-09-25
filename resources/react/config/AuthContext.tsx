@@ -1,36 +1,59 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import { getCookie, removeCookie, setCookie } from "../util/util";
+import { googleLogout } from "@react-oauth/google";
+import { getUserDetail } from "../repositories/auth";
 
 interface AuthContextType {
-  user: any;
-  signin: (user: any, callback: () => void) => void;
-  signout: (callback: () => void) => void;
+    isAuthenticated: boolean;
+    login: (token: string, expired_in_second: number) => void;
+    logout: () => void;
+    user: any;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<any>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState(null);
 
-  const signin = (newUser: any, callback: () => void) => {
-    document.cookie = "token=" + "res.data.token" + "; path=/";
-    setUser(newUser);
-    callback();
-  };
+    useEffect(() => {
+        const token = getCookie("credentials");
+        if (token) {
+            setIsAuthenticated(true);
+            getUserDetail().then((res: any) => {
+                setUser(res);
+            });
+        }
+    }, []);
 
-  const signout = (callback: () => void) => {
-    setUser(null);
-    callback();
-  };
+    const login = (token: string, expired_in_second: number) => {
+        getUserDetail().then((res: any) => {
+            setUser(res);
+        });
+        setCookie("credentials", token, expired_in_second);
+        setIsAuthenticated(true);
+    };
 
-  const value = { user, signin, signout };
+    const logout = () => {
+        removeCookie("credentials");
+        googleLogout();
+        setIsAuthenticated(false);
+    };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, user }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+    return context;
 };

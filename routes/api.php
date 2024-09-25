@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\BookmarkController;
 use App\Http\Controllers\api\UploadController;
 use App\Http\Controllers\api\ScraperController;
+use App\Http\Controllers\api\AuthController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -39,3 +40,11 @@ Route::get('/get-story-list', [AdminController::class, 'getStoryLIst']);
 Route::get('/get-category-dropdown', [AdminController::class, 'getCategoryDropdown']);
 Route::get('/get-chapter-list/{storyId}', [AdminController::class, 'getChapterList']);
 Route::post('/add-story', [AdminController::class, 'addStory']);
+
+Route::post('/auth/google', [AuthController::class, 'handleGoogleAuth']);
+
+Route::group(['middleware' => ['auth:api']],function () {
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
