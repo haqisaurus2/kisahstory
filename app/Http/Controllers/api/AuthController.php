@@ -7,10 +7,7 @@ use Google_Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Firebase\JWT\JWT;
 
 class AuthController extends Controller
 {
@@ -47,51 +44,50 @@ class AuthController extends Controller
             );
   
             $credentials =  ['username' => $user->email, 'password' => $googleId];
-            try {
-                if (! $token = JWTAuth::attempt($credentials)) {
-                    return response()->json(['error' => 'Invalid Credentials'], 401);
-                }
-            } catch (JWTException $e) {
-                return response()->json(['error' => 'Could not create token' . $e->getMessage()], 500);
+            $credentials['exp'] = time() + (60 * 60);
+
+            if (! $token = JWT::encode($credentials, env('JWT_SECRET'), 'HS256')) {
+                return response()->json(['error' => 'Invalid Credentials'], 401);
             }
+            
     
             return response()->json([
                 'access_token' => $token,
                 'token_type' => 'bearer',
-                'expires_in' => JWTAuth::factory()->getTTL() * 60
+                'expires_in' => $credentials['exp']
             ]);
         } else {
             return response()->json(['error' => 'Invalid Google Token'], 401);
         }
     }
-    public function refreshToken()
-    {
-        try {
-            $newToken = JWTAuth::refresh(JWTAuth::getToken());
-            return response()->json(['token' => $newToken]);
-        } catch (TokenExpiredException $e) {
-            return response()->json(['error' => 'Token has expired, cannot refresh'], 401);
-        }
-    }
-    public function me()
-    {
-        try {            
-            return response()->json(JWTAuth::user());
-        } catch (TokenExpiredException $e) {
-            return response()->json(['error' => 'Token has expired'], 401);
-        } catch (TokenInvalidException $e) {
-            return response()->json(['error' => 'Token is invalid'], 401);
-        }
-    }
+    // public function refreshToken()
+    // {
+    //     try {
+    //         $newToken = JWTAuth::refresh(JWTAuth::getToken());
+    //         return response()->json(['token' => $newToken]);
+    //     } catch (TokenExpiredException $e) {
+    //         return response()->json(['error' => 'Token has expired, cannot refresh'], 401);
+    //     }
+    // }
+    // public function me()
+    // {
+    //     try {            
+    //         return response()->json(JWTAuth::user());
+    //     } catch (TokenExpiredException $e) {
+    //         return response()->json(['error' => 'Token has expired'], 401);
+    //     } catch (TokenInvalidException $e) {
+    //         return response()->json(['error' => 'Token is invalid'], 401);
+    //     }
+    // }
 
-    public function logout(Request $request)
-    {
-        try {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            return response()->json(['message' => 'Successfully logged out']);
-        } catch (JWTException $e) {
-            return response()->json(['error' => 'Failed to logout, please try again'], 500);
-        }
-    }
+    // public function logout(Request $request)
+    // {
+    //     try {
+    //         JWTAuth::invalidate(JWTAuth::getToken());
+    //         return response()->json(['message' => 'Successfully logged out']);
+    //     } catch (JWTException $e) {
+    //         return response()->json(['error' => 'Failed to logout, please try again'], 500);
+    //     }
+    // }
 
 }
