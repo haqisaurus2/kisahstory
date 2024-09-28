@@ -7,6 +7,7 @@ use App\Http\Controllers\api\BookmarkController;
 use App\Http\Controllers\api\UploadController;
 use App\Http\Controllers\api\ScraperController;
 use App\Http\Controllers\api\AuthController;
+use App\Http\Middleware\MemberMiddleware;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -43,7 +44,7 @@ Route::post('/add-story', [AdminController::class, 'addStory']);
 
 Route::post('/auth/google', [AuthController::class, 'handleGoogleAuth']);
 
-Route::group(['middleware' => ['auth:api']],function () {
+Route::group(['middleware' => [MemberMiddleware::class]],function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::post('/logout', [AuthController::class, 'logout']);

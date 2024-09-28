@@ -43,7 +43,7 @@ class AuthController extends Controller
                 ]
             );
   
-            $credentials =  ['username' => $user->email, 'password' => $googleId];
+            $credentials =  ['username' => $user->email, 'id' => $user->id];
             $credentials['exp'] = time() + (60 * 60);
 
             if (! $token = JWT::encode($credentials, env('JWT_SECRET'), 'HS256')) {
@@ -69,16 +69,13 @@ class AuthController extends Controller
     //         return response()->json(['error' => 'Token has expired, cannot refresh'], 401);
     //     }
     // }
-    // public function me()
-    // {
-    //     try {            
-    //         return response()->json(JWTAuth::user());
-    //     } catch (TokenExpiredException $e) {
-    //         return response()->json(['error' => 'Token has expired'], 401);
-    //     } catch (TokenInvalidException $e) {
-    //         return response()->json(['error' => 'Token is invalid'], 401);
-    //     }
-    // }
+    public function me(Request $request)
+    {
+        $userInfo = $request->get('userInfo');
+        $user = User::where("id", "=", $userInfo["id"])->firstOrFail();
+        $user->password = "";
+        return response()->json($user);
+    }
 
     // public function logout(Request $request)
     // {
