@@ -59,7 +59,7 @@ export default function Admin() {
                 api.error({
                     message: "Error!",
                     description: `Gagal mendapatkan data!'`,
-                    duration: 0,
+                    duration: 5,
                 });
             });
     }
@@ -71,7 +71,7 @@ export default function Admin() {
                 api.success({
                     message: "Success!",
                     description: `Berhasil sync data! ${record.title}`,
-                    duration: 0,
+                    duration: 30,
                 });
             })
             .finally(() => {
@@ -84,19 +84,19 @@ export default function Admin() {
                 api.error({
                     message: "Error!",
                     description: `Gagal sync data! ${record.title}`,
-                    duration: 0,
+                    duration: 30,
                 });
             }); 
     }
 
-    function updateComicAction(record: any) {
+    async function updateComicAction(record: any) {
         setLoadingUpdates([record.uuid, ...loadingUpdates]);
-        updateComic(record.uuid)
+        return updateComic(record.uuid)
             .then((response: any) => {
                 api.success({
-                    message: "Success!",
+                    message: "Update Success!",
                     description: `Berhasil update data! ${record.title}`,
-                    duration: 0,
+                    duration: 30,
                 });
             })
             .finally(() => {
@@ -107,9 +107,9 @@ export default function Admin() {
             })
             .catch((error: any) => {
                 api.error({
-                    message: "Error!",
+                    message: "Update Error!",
                     description: `Gagal update data! ${record.title}`,
-                    duration: 0,
+                    duration: 30,
                 });
             });
     }
@@ -178,6 +178,7 @@ export default function Admin() {
 
  
     const rowSelection: TableProps<DataType>["rowSelection"] = {
+        selectedRowKeys,
         onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
             console.log(
                 `selectedRowKeys: ${selectedRowKeys}`,
@@ -185,8 +186,9 @@ export default function Admin() {
                 selectedRows
             );
             setSelectedRows(selectedRows);
+            setSelectedRowKeys(selectedRowKeys);
         },
-         
+        
     };
 
     return (
@@ -208,7 +210,22 @@ export default function Admin() {
                         for(const key in selectedRows)
                             await syncComicAction(selectedRows[key])
                         }
+                        setSelectedRowKeys([]);
+                        setSelectedRows([]);
+                        rowSelection.selectedRowKeys = [];
+
                 }}>Bulk sync</Button>
+
+                <Button onClick={async () => {
+                    if (selectedRows.length) {
+                        for(const key in selectedRows)
+                            await updateComicAction(selectedRows[key])
+                        }
+                        setSelectedRowKeys([]);
+                        setSelectedRows([]);
+                        rowSelection.selectedRowKeys = [];
+
+                }}>Bulk update</Button>
             </Space>
             <Table<DataType>
                 rowKey={(record: any) => record.id}
