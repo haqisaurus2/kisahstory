@@ -3,15 +3,12 @@
 namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Carbon\Traits\ToStringFormat;
-use Illuminate\Support\Facades\Auth;
 use Google_Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\Crypt;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
@@ -55,7 +52,7 @@ class AuthController extends Controller
                     return response()->json(['error' => 'Invalid Credentials'], 401);
                 }
             } catch (JWTException $e) {
-                return response()->json(['error' => 'Could not create token'], 500);
+                return response()->json(['error' => 'Could not create token' . $e->getMessage()], 500);
             }
     
             return response()->json([
