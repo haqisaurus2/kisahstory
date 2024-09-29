@@ -760,7 +760,7 @@ class ScraperController extends Controller
 
         ini_set('max_execution_time', 3000);
         set_time_limit(3000);
-        $inputFileName = '../daftar komik.xlsx';
+        $inputFileName = '/Users/haqisaurus/Documents/DOCUMENTS/docs/database.xlsx';
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
         $worksheet = null;
         $result = [];
