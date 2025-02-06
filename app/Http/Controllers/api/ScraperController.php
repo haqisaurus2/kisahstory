@@ -330,7 +330,7 @@ class ScraperController extends Controller
                 //throw $th;
             }
         }
-        return "OK";
+        return $datas;
     }
 
     public function updateComic(Request $request) {
