@@ -293,13 +293,28 @@ class ScraperController extends Controller
         return $data;
     }
 
+    public function syncUUID() {
+        $stories = ComicStory::whereNull("uuid")->get();
+    
+        foreach ($stories as $key => $story) {
+            $mongoComic = Comic::where("title", $story->title)->where("url", $story->source_url)->first();
+            if ($mongoComic) {
+                $story->uuid = $mongoComic->uuid;
+                $story->save();
+            }
+        }
+        return $stories;
+    }
+
     public function cronUpdate(Request $request) {
         ini_set('max_execution_time', 1000);
         // ProcessUpdateComic::dispatch("halo");
         $datas = ComicStory::where("status", "Ongoing")->where("updated_at", "<", Carbon::now()->subWeek())->orderBy("reader_count", "DESC")->limit(1)->get();
         // dd(ComicStory::where("status", "Ongoing")->where("updated_at", "<", "NOW() - INTERVAL 1 WEEK")->orderBy("reader_count", "DESC")->limit(1)->toSql());
+
         $response = [];
         foreach ($datas as $key => $value) {
+            $lastChapter = $value->last_chapter;
             error_log("updating... ".$value->title);
             // $url = "https://kisahstory.my.id/api";
             // $url = "http://localhost:8000/api";
@@ -325,9 +340,12 @@ class ScraperController extends Controller
                 // $this->client->request("GET", $url . "/sync-comic/" . $value->uuid);
                 $this->syncToWeb($value->uuid);
                 error_log("success sync ".$value->uuid);
+                $lastData = ComicStory::where("uuid", $value->uuid)->first();
                 array_push($response, [
                     "uuid" => $value->uuid,
                     "title" => $value->title,
+                    "before" => $lastChapter,
+                    "after" => $lastData->last_chapter,
                 ]);
             } catch (\Throwable $th) {
                 error_log("error sync ".$th);
