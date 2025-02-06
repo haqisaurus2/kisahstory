@@ -13,6 +13,7 @@ use App\Models\ComicTag;
 use App\Models\mongo\Chapter;
 use App\Models\mongo\Comic;
 use App\Models\mongo\Image;
+use App\Jobs\ProcessUpdateComic;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -292,14 +293,53 @@ class ScraperController extends Controller
         return $data;
     }
 
-    public function updateComic(Request $request)
-    {
+    public function cronUpdate(Request $request) {
+        // ProcessUpdateComic::dispatch("halo");
+        $datas = ComicStory::where("status", "Ongoing")->where("updated_at", "<", Carbon::now()->subWeek())->orderBy("reader_count", "DESC")->limit(1)->get();
+        // dd(ComicStory::where("status", "Ongoing")->where("updated_at", "<", "NOW() - INTERVAL 1 WEEK")->orderBy("reader_count", "DESC")->limit(1)->toSql());
+
+        foreach ($datas as $key => $value) {
+            error_log("updating... ".$value->title);
+            // $url = "https://kisahstory.my.id/api";
+            // $url = "http://localhost:8000/api";
+            
+            try {
+                $request->mergeIfMissing(['uuid' => $value->uuid]);
+
+                // $data = [
+                //     'uuid' => $value->uuid,
+                // ];
+                // $this->client->request("POST", $url . "/update-comic", [
+                //     'json' => $data,
+                // ]);
+                // error_log( $request->input("uuid"));
+                $this->updateComic($request);
+                error_log("success update ".$value->uuid);
+            } catch (\Throwable $th) {
+                error_log("error update ".$th);
+                error_log("failed update ".$value->uuid);
+                //throw $th;
+            }
+            try {
+                // $this->client->request("GET", $url . "/sync-comic/" . $value->uuid);
+                $this->syncToWeb($value->uuid);
+                error_log("success sync ".$value->uuid);
+            } catch (\Throwable $th) {
+                error_log("error sync ".$th);
+                error_log("failed sync ".$value->uuid);
+                //throw $th;
+            }
+        }
+        return "OK";
+    }
+
+    public function updateComic(Request $request) {
         ini_set('max_execution_time', 1000);
         DB::beginTransaction();
+        $lastData = [];
         try {
             $uuid = $request->input("uuid");
             $story = Comic::where("uuid", $uuid)->first();
-
 
             $response = $this->client->request('GET', $story->url);
             // get content and pass to the crawler
@@ -317,7 +357,6 @@ class ScraperController extends Controller
                 }
             });
             array_shift($chapters);
-            $lastData = [];
             $chapters = array_reverse($chapters);
             foreach ($chapters as $chapter) {
                 if ((float) $story->last_chapter < (float) $chapter["order"]) {
@@ -350,20 +389,19 @@ class ScraperController extends Controller
                             'order' => $j,
                         ];
                     });
-                    error_log($story->last_chapter);
-                    error_log($chapter["order"]);
+                    error_log("last chapt ".$story->last_chapter);
+                    error_log("order chapter ".$chapter["order"]);
                     $story->last_chapter = (float) $chapter["order"];
                     $story->scrap_date = Carbon::now();
-                    $story->save();
                     $chapter["images"] = $images;
                     array_push($lastData, $chapter);
                 }
             }
+            $story->save();
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-
-            echo $e->getMessage();
+            error_log("error update comic ".$e->getMessage());
         }
         return $lastData;
     }
@@ -559,6 +597,7 @@ class ScraperController extends Controller
             }
             $story->uuid = $uuid;
             $story->last_chapter = $comic->last_chapter;
+            $story->updated_at = Carbon::now();
             $story->save();
             $comic->sync_date = Carbon::now();
             $comic->save();

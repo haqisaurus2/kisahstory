@@ -27,6 +27,7 @@ Route::post('/delete-comic', [ScraperController::class, 'deleteComic']);
 Route::post('/update-comic', [ScraperController::class, 'updateComic']);
 Route::post('/delete-chapter', [ScraperController::class, 'deleteChapter']);
 Route::get('/sync-comic/{uuid}', [ScraperController::class, 'syncToWeb']);
+Route::get('/cron-update', [ScraperController::class, 'cronUpdate']);
 Route::get('/test', [ScraperController::class, 'cobalagi']);
 
 
