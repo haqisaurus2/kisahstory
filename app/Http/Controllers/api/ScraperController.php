@@ -294,6 +294,7 @@ class ScraperController extends Controller
     }
 
     public function cronUpdate(Request $request) {
+        ini_set('max_execution_time', 1000);
         // ProcessUpdateComic::dispatch("halo");
         $datas = ComicStory::where("status", "Ongoing")->where("updated_at", "<", Carbon::now()->subWeek())->orderBy("reader_count", "DESC")->limit(1)->get();
         // dd(ComicStory::where("status", "Ongoing")->where("updated_at", "<", "NOW() - INTERVAL 1 WEEK")->orderBy("reader_count", "DESC")->limit(1)->toSql());
