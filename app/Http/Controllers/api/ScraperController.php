@@ -297,7 +297,7 @@ class ScraperController extends Controller
         // ProcessUpdateComic::dispatch("halo");
         $datas = ComicStory::where("status", "Ongoing")->where("updated_at", "<", Carbon::now()->subWeek())->orderBy("reader_count", "DESC")->limit(1)->get();
         // dd(ComicStory::where("status", "Ongoing")->where("updated_at", "<", "NOW() - INTERVAL 1 WEEK")->orderBy("reader_count", "DESC")->limit(1)->toSql());
-
+        $response = [];
         foreach ($datas as $key => $value) {
             error_log("updating... ".$value->title);
             // $url = "https://kisahstory.my.id/api";
@@ -324,13 +324,17 @@ class ScraperController extends Controller
                 // $this->client->request("GET", $url . "/sync-comic/" . $value->uuid);
                 $this->syncToWeb($value->uuid);
                 error_log("success sync ".$value->uuid);
+                array_push($response, [
+                    "uuid" => $value->uuid,
+                    "title" => $value->title,
+                ]);
             } catch (\Throwable $th) {
                 error_log("error sync ".$th);
                 error_log("failed sync ".$value->uuid);
                 //throw $th;
             }
         }
-        return $datas;
+        return $response;
     }
 
     public function updateComic(Request $request) {
