@@ -16,7 +16,11 @@ const Login: React.FC = () => {
             loginUsingGoogle(tokenId)
                 .then((response: any) => {
                     auth.login(response.access_token, response.expires_in);
-                    navigate('/dashboard/');
+                    if (auth.user.google_id=='111278741725984561867') {
+                        navigate("/admin");
+                    } else {
+                        navigate('/dashboard/');
+                    }
                 })
                 .finally(() => {
                 })
