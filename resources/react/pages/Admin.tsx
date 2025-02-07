@@ -34,7 +34,7 @@ export default function Admin() {
 
     const [pagination, setPagination] = useState({
         page: 1,
-        pageSize: 50,
+        pageSize: 100,
         total: 0,
         keyword: "",
         sort: ["id", "desc"],
