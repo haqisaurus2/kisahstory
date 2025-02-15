@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('story_sections', function (Blueprint $table) {
             $table->longText('base64')->nullable();
             $table->string('mime')->nullable();
+            $table->decimal('size_kb')->nullable();
         });
     }
 
@@ -25,6 +26,7 @@ return new class extends Migration
         Schema::table('story_sections', function (Blueprint $table) {
             $table->dropColumn('base64');
             $table->dropColumn('mime');
+            $table->dropColumn('size_kb');
         });
     }
 };

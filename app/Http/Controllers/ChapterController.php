@@ -67,6 +67,9 @@ class ChapterController extends Controller
         }
 
         $mimeType = $imageContents->header('content-type');
+        $bodyLengthBytes = strlen($imageContents->body()); // Get length in bytes
+        $bodyLengthKB = round($bodyLengthBytes / 1024, 2); 
+        $section->size_kb = $bodyLengthKB;
         $section->mime = $mimeType;
         $section->base64 = base64_encode($imageContents->body());
         $section->save();

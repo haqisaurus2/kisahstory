@@ -9,5 +9,5 @@ class ComicSection extends Model
 {
     use HasFactory;
     protected $table = 'story_sections';
-    protected $fillable = ['content', 'slug', 'alt1', 'order', 'alt2', 'chapter_id', 'base64', 'mime' ]; 
+    protected $fillable = ['content', 'slug', 'alt1', 'order', 'alt2', 'chapter_id', 'base64', 'mime', 'size_kb' ]; 
 }
