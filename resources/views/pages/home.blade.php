@@ -161,25 +161,25 @@
                 <div class="w-full">
                     <h4 class="font-bold text-3xl mb-5 mt-6 px-3"><span class="text-primary"> Update </span>Terbaru</h4>
                     <div class="flex-col w-full">
-                        @foreach ($updatedComics as $comic)
+                        @foreach ($updatedComics as $ucomic)
                         <div class="block px-3 pb-2 mt-2 border-b-2">
                             <div class="h-20 flex overflow-hidden bg-white w-full">
-                                <a href="/story/{{$comic->slug}}" class="flex w-20">
-                                    <img src="{{$comic->thumbnail}}" alt="{{$comic->title}}}" class="object-cover h-full w-full" />
+                                <a href="/story/{{$ucomic->slug}}" class="flex w-20">
+                                    <img src="{{$ucomic->thumbnail}}" alt="{{$ucomic->title}}" class="object-cover h-full w-full" />
                                 </a>
                                 <div class="flex flex-col pl-2">
-                                    <a href="/story/{{$comic->slug}}">
-                                        <h3 class="text-gray-900 font-bold text-sm mb-2">{{$comic->title}} <span class="text-gray-300 text-sm"> ({{  $comic->category->name }})</span></h3> 
+                                    <a href="/story/{{$ucomic->slug}}">
+                                        <h3 class="text-gray-900 font-bold text-sm mb-2">{{$ucomic->title}} <span class="text-gray-300 text-sm"> ({{  $ucomic->category->name }})</span></h3> 
                                     </a>
-                                    @if (count($recommend->chapters) > 0) 
+                                    @if (count($ucomic->chapters) > 0) 
                                         <div class="text-sm">
-                                            <p class="text-gray-900 leading-none ">Bab Terakhir: <a class="bg-slate-500 rounded-sm p-1 text-white underline"  href="/chapter/{{$comic->chapters[0]->slug}}">{{$comic->last_chapter}}</a></p>
-                                            <p class="text-gray-600">{{date('d-M-Y', strtotime($comic->updated_at)) }}</p>
+                                            <p class="text-gray-900 leading-none ">Bab Terakhir: <a class="bg-slate-500 rounded-sm p-1 text-white underline"  href="/chapter/{{$ucomic->chapters[0]->slug}}">{{$ucomic->last_chapter}}</a></p>
+                                            <p class="text-gray-600">{{date('d-M-Y', strtotime($ucomic->updated_at)) }}</p>
                                         </div>
                                     @endif 
                                     <div class="flex">
-                                        <span class="text-gray-900 text-sm mr-2"><i class="fas fa-eye"></i> <span class="number-convert"> {{ $comic->reader_count }} </span></span>  
-                                        <span class="text-gray-900 text-sm"><i class="fas fa-star"></i> {{ $comic->rating }}/10</span> 
+                                        <span class="text-gray-900 text-sm mr-2"><i class="fas fa-eye"></i> <span class="number-convert"> {{ $ucomic->reader_count }} </span></span>  
+                                        <span class="text-gray-900 text-sm"><i class="fas fa-star"></i> {{ $ucomic->rating }}/10</span> 
                                     </div> 
                                 </div>
                             </div>
@@ -192,25 +192,25 @@
                 <div class="w-full">
                     <h4 class="font-bold text-3xl mb-5 mt-6 px-3"><span class="text-primary"> Judul </span>Baru</h4>
                     <div class="flex-col w-full">
-                        @foreach ($newComics as $comic)
+                        @foreach ($newComics as $ncomic)
                         <div class="block px-3 pb-2 mt-2 border-b-2">
                             <div class="h-20 flex overflow-hidden bg-white w-full">
-                                <a href="/story/{{$comic->slug}}" class="flex w-20">
-                                    <img src="{{$comic->thumbnail}}" alt="{{$comic->title}}}" class="object-cover h-full w-full" />
+                                <a href="/story/{{$ncomic->slug}}" class="flex w-20">
+                                    <img src="{{$ncomic->thumbnail}}" alt="{{$ncomic->title}}" class="object-cover h-full w-full" />
                                 </a>
                                 <div class="flex flex-col pl-2">
-                                    <a href="/story/{{$comic->slug}}">
-                                        <h3 class="text-gray-900 font-bold text-sm mb-2">{{$comic->title}} <span class="text-gray-300 text-sm"> ({{  $comic->category->name }})</span></h3> 
+                                    <a href="/story/{{$ncomic->slug}}">
+                                        <h3 class="text-gray-900 font-bold text-sm mb-2">{{$ncomic->title}} <span class="text-gray-300 text-sm"> ({{  $ncomic->category->name }})</span></h3> 
                                     </a>
-                                    @if (count($recommend->chapters) > 0) 
+                                    @if (count($ncomic->chapters) > 0) 
                                         <div class="text-sm">
-                                            <p class="text-gray-900 leading-none ">Bab Terakhir: <a class="bg-slate-500 rounded-sm p-1 text-white underline"  href="/chapter/{{$comic->chapters[0]->slug}}">{{$comic->last_chapter}}</a></p>
-                                            <p class="text-gray-600">{{date('d-M-Y', strtotime($comic->created_at)) }}</p>
+                                            <p class="text-gray-900 leading-none ">Bab Terakhir: <a class="bg-slate-500 rounded-sm p-1 text-white underline"  href="/chapter/{{$ncomic->chapters[0]->slug}}">{{$ncomic->last_chapter}}</a></p>
+                                            <p class="text-gray-600">{{date('d-M-Y', strtotime($ncomic->created_at)) }}</p>
                                         </div>
                                     @endif 
                                     <div class="flex">
-                                        <span class="text-gray-900 text-sm mr-2"><i class="fas fa-eye"></i> <span class="number-convert"> {{ $comic->reader_count }} </span></span>  
-                                        <span class="text-gray-900 text-sm"><i class="fas fa-star"></i> {{ $comic->rating }}/10</span> 
+                                        <span class="text-gray-900 text-sm mr-2"><i class="fas fa-eye"></i> <span class="number-convert"> {{ $ncomic->reader_count }} </span></span>  
+                                        <span class="text-gray-900 text-sm"><i class="fas fa-star"></i> {{ $ncomic->rating }}/10</span> 
                                     </div> 
                                 </div>
                             </div>

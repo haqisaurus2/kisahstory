@@ -116,9 +116,10 @@
                                 <span><span class="number-convert">{{ $story->reader_count }}</span> Reader</span> 
                             </span>
                             <p class="text-gray-900 leading-none">Bab Terakhir: <a href="#">{{ $story->last_chapter }}</a></p> 
-                            <p class="text-gray-600">{{date('d-M-Y', strtotime($story->chapters[0]->created_at)) }}</p> 
+                            @if (count($story->chapters))
+                                <p class="text-gray-600">{{date('d-M-Y', strtotime($story->chapters[0]->created_at)) }}</p> 
+                            @endif
                         </div>
-                          
                         <div class="my-1 block ">
                             @foreach ($story->tags as $tag)
                                 <span class="px-2 py-1 m-1 bg-[#25D366] rounded-sm text-white text-xs" >
@@ -130,7 +131,6 @@
                 </div>
                 @endforeach
             @endif 
-            
             {{ $results->links('pagination::default') }}
 
         </div>
