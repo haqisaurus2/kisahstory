@@ -10,7 +10,7 @@ class ComicTag extends Model
 {
     use HasFactory;
     protected $table = 'story_tags';
-    protected $fillable = ['name', 'slug']; 
+    protected $fillable = ['id', 'name', 'slug']; 
      public function stories(): BelongsToMany
     {
         return $this->belongsToMany(ComicStory::class, 'stories_tags', 'tag_id', 'story_id') ;
